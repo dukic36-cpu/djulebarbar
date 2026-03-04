@@ -5,12 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Djule_Barbar - Your Life Universe</title>
     <script type="module">
-        // Import Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         
-        // Your Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyAhqIMQBNNO9wvC1jjQm0KieZ-OfS05HgE",
             authDomain: "djulebarbar.firebaseapp.com",
@@ -20,12 +18,10 @@
             appId: "1:31852097987:web:99e8917664686153d18d76"
         };
         
-        // Initialize
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         
-        // Make available globally
         window.firebaseApp = app;
         window.firebaseAuth = auth;
         window.firebaseDb = db;
@@ -44,6 +40,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -64,6 +61,7 @@
             color: var(--text-light);
             min-height: 100vh;
             overflow-x: hidden;
+            padding-bottom: 90px;
         }
 
         #auth-screen {
@@ -127,18 +125,9 @@
             color: var(--text-dark);
         }
 
-        .google-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(255,255,255,0.2);
-        }
-
         .email-btn {
             background: var(--primary-green);
             color: white;
-        }
-
-        .email-btn:hover {
-            background: var(--accent-green);
         }
 
         .auth-input {
@@ -159,7 +148,7 @@
         #app {
             display: none;
             min-height: 100vh;
-            padding-bottom: 80px;
+            padding-bottom: 100px;
         }
 
         .header {
@@ -204,52 +193,69 @@
             cursor: pointer;
         }
 
+        /* FIXED NAVIGATION - Scrollable */
         .nav-container {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: rgba(26, 26, 26, 0.95);
+            background: rgba(26, 26, 26, 0.98);
             backdrop-filter: blur(20px);
             border-top: 1px solid rgba(135, 168, 120, 0.2);
-            z-index: 100;
-            padding: 10px 0;
+            z-index: 1000;
+            padding: 8px 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.3);
+        }
+
+        .nav-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            padding: 0 10px;
+        }
+
+        .nav-scroll::-webkit-scrollbar {
+            display: none;
         }
 
         .nav-items {
             display: flex;
-            justify-content: space-around;
-            max-width: 600px;
-            margin: 0 auto;
+            gap: 5px;
+            min-width: max-content;
         }
 
         .nav-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 5px 15px;
+            padding: 8px 16px;
             cursor: pointer;
             transition: all 0.3s;
             border-radius: 12px;
             color: rgba(255,255,255,0.5);
+            min-width: 70px;
+            border: 1px solid transparent;
         }
 
         .nav-item.active {
             color: var(--sage-green);
-            background: rgba(135, 168, 120, 0.1);
+            background: rgba(135, 168, 120, 0.15);
+            border-color: rgba(135, 168, 120, 0.3);
         }
 
-        .nav-item:hover {
-            color: var(--sage-green);
+        .nav-item:active {
+            transform: scale(0.95);
         }
 
         .nav-icon {
-            font-size: 1.5rem;
-            margin-bottom: 3px;
+            font-size: 1.4rem;
+            margin-bottom: 4px;
         }
 
         .nav-label {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
+            text-align: center;
+            white-space: nowrap;
         }
 
         .feature-section {
@@ -274,7 +280,7 @@
         }
 
         .feature-title {
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             margin-bottom: 5px;
             display: flex;
             align-items: center;
@@ -295,12 +301,6 @@
             font-size: 0.8rem;
             cursor: pointer;
             margin-left: auto;
-            transition: all 0.3s;
-        }
-
-        .help-btn:hover {
-            background: var(--sage-green);
-            color: var(--primary-dark);
         }
 
         .card {
@@ -310,12 +310,6 @@
             margin-bottom: 15px;
             border: 1px solid rgba(135, 168, 120, 0.1);
             backdrop-filter: blur(10px);
-            transition: all 0.3s;
-        }
-
-        .card:hover {
-            border-color: rgba(135, 168, 120, 0.3);
-            transform: translateY(-2px);
         }
 
         .card-title {
@@ -331,38 +325,33 @@
 
         #constellation-canvas {
             width: 100%;
-            height: 400px;
+            height: 350px;
             background: radial-gradient(ellipse at center, rgba(45,80,22,0.3) 0%, transparent 70%);
             border-radius: 16px;
             position: relative;
             overflow: hidden;
-            cursor: grab;
-        }
-
-        #constellation-canvas:active {
-            cursor: grabbing;
+            touch-action: none;
         }
 
         .constellation-node {
             position: absolute;
-            width: 60px;
-            height: 60px;
+            width: 55px;
+            height: 55px;
             border-radius: 50%;
             background: radial-gradient(circle at 30% 30%, var(--sage-green), var(--primary-green));
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
             cursor: pointer;
             transition: all 0.3s;
             box-shadow: 0 0 20px rgba(135, 168, 120, 0.5);
             border: 2px solid rgba(255,255,255,0.2);
-            user-select: none;
+            z-index: 10;
         }
 
-        .constellation-node:hover {
-            transform: scale(1.2);
-            box-shadow: 0 0 40px rgba(135, 168, 120, 0.8);
+        .constellation-node:active {
+            transform: scale(1.3);
         }
 
         .constellation-node.active {
@@ -398,9 +387,11 @@
             50% { box-shadow: 0 0 25px rgba(135,168,120,0.6); }
         }
 
+        /* DOCUMENTARY STYLES */
         .timeline {
             position: relative;
             padding-left: 30px;
+            margin-top: 20px;
         }
 
         .timeline::before {
@@ -415,7 +406,7 @@
 
         .timeline-item {
             position: relative;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             padding: 15px;
             background: var(--card-bg);
             border-radius: 12px;
@@ -443,51 +434,55 @@
         .timeline-title {
             font-weight: bold;
             margin-bottom: 5px;
+            font-size: 1.1rem;
         }
 
         .timeline-scene {
             font-style: italic;
             color: rgba(255,255,255,0.7);
+            line-height: 1.5;
         }
 
         .add-scene-btn {
             width: 100%;
-            padding: 15px;
+            padding: 18px;
             background: linear-gradient(135deg, var(--primary-green), var(--accent-green));
             border: none;
             border-radius: 12px;
             color: white;
-            font-size: 1rem;
+            font-size: 1.1rem;
             cursor: pointer;
             margin-top: 20px;
-            transition: all 0.3s;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(107, 142, 35, 0.3);
         }
 
-        .add-scene-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(107, 142, 35, 0.4);
+        .add-scene-btn:active {
+            transform: scale(0.98);
         }
 
+        /* ROULETTE STYLES */
         .roulette-container {
             text-align: center;
-            padding: 40px 20px;
+            padding: 30px 20px;
         }
 
         .roulette-wheel {
-            width: 280px;
-            height: 280px;
-            margin: 0 auto 30px;
+            width: 260px;
+            height: 260px;
+            margin: 0 auto 25px;
             border-radius: 50%;
             background: conic-gradient(
-                var(--primary-green) 0deg 60deg,
-                var(--sage-green) 60deg 120deg,
-                var(--accent-green) 120deg 180deg,
-                var(--primary-green) 180deg 240deg,
-                var(--sage-green) 240deg 300deg,
-                var(--accent-green) 300deg 360deg
+                var(--primary-green) 0deg 51deg,
+                var(--sage-green) 51deg 102deg,
+                var(--accent-green) 102deg 153deg,
+                var(--primary-green) 153deg 204deg,
+                var(--sage-green) 204deg 255deg,
+                var(--accent-green) 255deg 306deg,
+                var(--primary-green) 306deg 360deg
             );
             position: relative;
-            box-shadow: 0 0 50px rgba(135, 168, 120, 0.3);
+            box-shadow: 0 0 40px rgba(135, 168, 120, 0.3);
             transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
         }
 
@@ -496,49 +491,48 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 80px;
-            height: 80px;
+            width: 70px;
+            height: 70px;
             background: var(--primary-dark);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 1.8rem;
             border: 3px solid var(--sage-green);
             z-index: 10;
         }
 
         .roulette-pointer {
             position: absolute;
-            top: -10px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
-            border-left: 15px solid transparent;
-            border-right: 15px solid transparent;
-            border-top: 30px solid var(--light-green);
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-top: 25px solid var(--light-green);
             z-index: 20;
             filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
         }
 
         .spin-btn {
-            padding: 18px 50px;
-            font-size: 1.2rem;
+            padding: 16px 40px;
+            font-size: 1.1rem;
             background: linear-gradient(135deg, var(--sage-green), var(--accent-green));
             border: none;
             border-radius: 30px;
             color: white;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(135, 168, 120, 0.4);
         }
 
-        .spin-btn:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(135, 168, 120, 0.5);
+        .spin-btn:active:not(:disabled) {
+            transform: scale(0.95);
         }
 
         .spin-btn:disabled {
@@ -547,8 +541,8 @@
         }
 
         .combination-result {
-            margin-top: 30px;
-            padding: 25px;
+            margin-top: 25px;
+            padding: 20px;
             background: linear-gradient(135deg, rgba(135,168,120,0.2), rgba(45,80,22,0.3));
             border-radius: 16px;
             border: 2px solid var(--sage-green);
@@ -563,41 +557,42 @@
         .combination-interests {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 10px;
             margin-bottom: 15px;
             flex-wrap: wrap;
         }
 
         .combination-item {
             background: var(--primary-green);
-            padding: 10px 20px;
+            padding: 10px 18px;
             border-radius: 20px;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
 
         .combination-suggestion {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: var(--light-green);
-            margin-top: 15px;
+            line-height: 1.5;
         }
 
+        /* DATA STYLES */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 12px;
             margin-bottom: 20px;
         }
 
         .stat-card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 20px;
+            padding: 18px;
             text-align: center;
             border: 1px solid rgba(135, 168, 120, 0.1);
         }
 
         .stat-value {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: bold;
             background: linear-gradient(135deg, var(--sage-green), var(--light-green));
             -webkit-background-clip: text;
@@ -606,7 +601,7 @@
 
         .stat-label {
             color: rgba(255,255,255,0.6);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             margin-top: 5px;
         }
 
@@ -615,9 +610,7 @@
             border-radius: 16px;
             padding: 20px;
             margin-bottom: 15px;
-            height: 250px;
-            position: relative;
-            overflow: hidden;
+            height: 220px;
         }
 
         .chart-title {
@@ -630,8 +623,8 @@
             display: flex;
             align-items: flex-end;
             justify-content: space-around;
-            height: 180px;
-            padding-top: 20px;
+            height: 160px;
+            padding-top: 10px;
         }
 
         .bar-item {
@@ -639,26 +632,19 @@
             flex-direction: column;
             align-items: center;
             flex: 1;
-            max-width: 60px;
         }
 
         .bar {
-            width: 40px;
+            width: 30px;
             background: linear-gradient(180deg, var(--sage-green), var(--primary-green));
-            border-radius: 8px 8px 0 0;
+            border-radius: 6px 6px 0 0;
             transition: all 0.5s;
-            position: relative;
-        }
-
-        .bar:hover {
-            background: linear-gradient(180deg, var(--light-green), var(--sage-green));
         }
 
         .bar-label {
-            margin-top: 10px;
-            font-size: 0.75rem;
+            margin-top: 8px;
+            font-size: 0.7rem;
             color: rgba(255,255,255,0.7);
-            text-align: center;
         }
 
         .timer-section {
@@ -670,7 +656,7 @@
         }
 
         .timer-display {
-            font-size: 3rem;
+            font-size: 2.8rem;
             font-weight: bold;
             font-family: 'Courier New', monospace;
             margin: 20px 0;
@@ -682,16 +668,15 @@
             display: flex;
             gap: 10px;
             justify-content: center;
-            flex-wrap: wrap;
         }
 
         .timer-btn {
-            padding: 12px 25px;
+            padding: 12px 30px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             font-size: 1rem;
-            transition: all 0.3s;
+            font-weight: bold;
         }
 
         .timer-start {
@@ -716,76 +701,115 @@
             color: white;
             font-size: 1rem;
             width: 100%;
-            max-width: 300px;
+            max-width: 280px;
+        }
+
+        /* BERLIN & NEWS STYLES */
+        .refresh-btn {
+            background: rgba(135, 168, 120, 0.2);
+            border: 1px solid var(--sage-green);
+            color: var(--sage-green);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.95);
         }
 
         .event-filters {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             overflow-x: auto;
             padding-bottom: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             -webkit-overflow-scrolling: touch;
         }
 
         .filter-chip {
-            padding: 8px 16px;
+            padding: 8px 14px;
             background: rgba(135, 168, 120, 0.2);
             border: 1px solid var(--sage-green);
             border-radius: 20px;
             white-space: nowrap;
             cursor: pointer;
-            transition: all 0.3s;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .filter-chip.active {
             background: var(--sage-green);
             color: var(--primary-dark);
+            font-weight: bold;
         }
 
-        .event-card {
+        .event-card, .news-card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 20px;
+            padding: 18px;
             margin-bottom: 15px;
-            border-left: 4px solid var(--sage-green);
-            transition: all 0.3s;
+            border: 1px solid rgba(135, 168, 120, 0.1);
         }
 
-        .event-card:hover {
-            transform: translateX(5px);
-            border-left-width: 8px;
-        }
-
-        .event-date {
+        .event-date, .news-category {
             display: inline-block;
             background: var(--primary-green);
             padding: 5px 12px;
             border-radius: 15px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .event-title {
-            font-size: 1.2rem;
+        .news-category.gaming { background: rgba(138, 43, 226, 0.3); color: #DA70D6; }
+        .news-category.horror { background: rgba(139, 0, 0, 0.3); color: #FF6B6B; }
+        .news-category.sports { background: rgba(255, 140, 0, 0.3); color: #FFA500; }
+        .news-category.berlin { background: rgba(135, 168, 120, 0.3); color: var(--sage-green); }
+        .news-category.anime { background: rgba(255, 105, 180, 0.3); color: #FF69B4; }
+        .news-category.shrimp { background: rgba(0, 191, 255, 0.3); color: #87CEEB; }
+
+        .event-title, .news-title {
+            font-size: 1.1rem;
             margin-bottom: 8px;
             color: var(--light-green);
+            line-height: 1.4;
         }
 
         .event-location {
             color: rgba(255,255,255,0.6);
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
             margin-bottom: 10px;
         }
 
-        .event-description {
+        .event-description, .news-excerpt {
             color: rgba(255,255,255,0.8);
             line-height: 1.5;
             font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .source-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--sage-green);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding: 8px 14px;
+            background: rgba(135, 168, 120, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(135, 168, 120, 0.3);
+            margin-top: 5px;
+        }
+
+        .source-link:active {
+            background: rgba(135, 168, 120, 0.3);
         }
 
         .event-tags {
@@ -803,71 +827,28 @@
             color: var(--sage-green);
         }
 
-        .news-grid {
-            display: grid;
-            gap: 15px;
-        }
-
-        .news-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            padding: 20px;
-            border: 1px solid rgba(135, 168, 120, 0.1);
-            transition: all 0.3s;
-        }
-
-        .news-card:hover {
-            border-color: rgba(135, 168, 120, 0.3);
-        }
-
-        .news-category {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin-bottom: 10px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .news-category.gaming { background: rgba(138, 43, 226, 0.3); color: #DA70D6; }
-        .news-category.horror { background: rgba(139, 0, 0, 0.3); color: #FF6B6B; }
-        .news-category.sports { background: rgba(255, 140, 0, 0.3); color: #FFA500; }
-        .news-category.berlin { background: rgba(135, 168, 120, 0.3); color: var(--sage-green); }
-        .news-category.anime { background: rgba(255, 105, 180, 0.3); color: #FF69B4; }
-        .news-category.shrimp { background: rgba(0, 191, 255, 0.3); color: #87CEEB; }
-
-        .news-title {
-            font-size: 1.1rem;
-            margin-bottom: 8px;
-            line-height: 1.4;
-        }
-
-        .news-excerpt {
-            color: rgba(255,255,255,0.7);
-            font-size: 0.9rem;
-            line-height: 1.5;
-            margin-bottom: 10px;
-        }
-
         .news-meta {
             display: flex;
             justify-content: space-between;
             font-size: 0.8rem;
             color: rgba(255,255,255,0.5);
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
         }
 
+        /* MODAL STYLES */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.8);
+            background: rgba(0,0,0,0.85);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            z-index: 2000;
             padding: 20px;
         }
 
@@ -878,8 +859,8 @@
         .modal-content {
             background: linear-gradient(135deg, var(--primary-dark), var(--primary-green));
             border-radius: 20px;
-            padding: 30px;
-            max-width: 500px;
+            padding: 25px;
+            max-width: 90%;
             width: 100%;
             max-height: 80vh;
             overflow-y: auto;
@@ -894,7 +875,7 @@
         }
 
         .modal-title {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             color: var(--light-green);
         }
 
@@ -904,41 +885,50 @@
             color: var(--sage-green);
             font-size: 1.5rem;
             cursor: pointer;
+            padding: 5px;
         }
 
         .modal-body {
-            line-height: 1.8;
+            line-height: 1.7;
             color: rgba(255,255,255,0.9);
+            font-size: 0.95rem;
         }
 
         .modal-body h3 {
             color: var(--sage-green);
-            margin: 20px 0 10px;
-            font-size: 1.1rem;
+            margin: 15px 0 8px;
+            font-size: 1rem;
         }
 
         .modal-body ul {
             margin-left: 20px;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
         }
 
         .modal-body li {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        @media (max-width: 600px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .roulette-wheel {
-                width: 240px;
-                height: 240px;
-            }
-            
-            .timer-display {
-                font-size: 2.5rem;
-            }
+        /* TOAST */
+        .toast {
+            position: fixed;
+            bottom: 110px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--sage-green);
+            color: var(--primary-dark);
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: bold;
+            opacity: 0;
+            transition: all 0.3s;
+            z-index: 3000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
         }
 
         @media (min-width: 768px) {
@@ -946,43 +936,10 @@
                 grid-template-columns: repeat(4, 1fr);
             }
             
-            .news-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .nav-item {
+                min-width: 80px;
+                padding: 10px 20px;
             }
-        }
-
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 100px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--sage-green);
-            color: var(--primary-dark);
-            padding: 15px 25px;
-            border-radius: 25px;
-            font-weight: bold;
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 1001;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
         }
     </style>
 </head>
@@ -1006,11 +963,6 @@
                     Sign In / Sign Up
                 </button>
             </div>
-            
-            <div id="auth-loading" style="display: none; text-align: center;">
-                <div class="loading" style="width: 40px; height: 40px; border-width: 4px;"></div>
-                <p style="margin-top: 15px; color: var(--sage-green);">Connecting to your universe...</p>
-            </div>
         </div>
     </div>
 
@@ -1019,16 +971,17 @@
             <div class="header-content">
                 <div class="header-title">🌿 Djule_Barbar</div>
                 <div class="user-menu">
-                    <span id="user-name" style="color: rgba(255,255,255,0.7); font-size: 0.9rem;"></span>
+                    <span id="user-name" style="color: rgba(255,255,255,0.7); font-size: 0.85rem;"></span>
                     <div class="user-avatar" onclick="signOut()">👤</div>
                 </div>
             </div>
         </div>
 
+        <!-- CONSTELLATION -->
         <div id="constellation-section" class="feature-section active">
             <div class="feature-header">
                 <div class="feature-title">
-                    ✨ Constellation Life
+                    ✨ Constellation
                     <button class="help-btn" onclick="showHelp('constellation')">?</button>
                 </div>
                 <div class="feature-subtitle">Your interests as a living universe</div>
@@ -1047,16 +1000,16 @@
                 <div class="card-title">📊 Universe Activity</div>
                 <div class="card-content">
                     <p>Active Nodes: <span id="active-nodes">0</span></p>
-                    <p>Connections Formed: <span id="connections-count">0</span></p>
-                    <p>Last Activity: <span id="last-activity">Never</span></p>
+                    <p>Connections: <span id="connections-count">0</span></p>
                 </div>
             </div>
         </div>
 
+        <!-- DOCUMENTARY -->
         <div id="documentary-section" class="feature-section">
             <div class="feature-header">
                 <div class="feature-title">
-                    🎬 The Documentary of You
+                    🎬 Documentary
                     <button class="help-btn" onclick="showHelp('documentary')">?</button>
                 </div>
                 <div class="feature-subtitle">Your life as an ongoing story</div>
@@ -1066,11 +1019,12 @@
                 <div class="card-title">🎭 Current Episode</div>
                 <div class="card-content" id="current-episode">
                     <p><strong>Episode <span id="episode-number">1</span>:</strong> <span id="episode-title">The Beginning</span></p>
-                    <p style="margin-top: 10px; color: rgba(255,255,255,0.7);" id="episode-summary">Your story is just beginning. Add scenes to create your documentary.</p>
+                    <p style="margin-top: 10px; color: rgba(255,255,255,0.7); font-size: 0.95rem;" id="episode-summary">Your story begins here. Add your first scene!</p>
                 </div>
             </div>
             
             <div class="timeline" id="timeline">
+                <p style="color: rgba(255,255,255,0.5); font-style: italic; text-align: center; padding: 20px;">No scenes yet. Tap the button below to start!</p>
             </div>
             
             <button class="add-scene-btn" onclick="addScene()">
@@ -1078,10 +1032,11 @@
             </button>
         </div>
 
+        <!-- ROULETTE -->
         <div id="roulette-section" class="feature-section">
             <div class="feature-header">
                 <div class="feature-title">
-                    🎲 Interest Roulette
+                    🎲 Roulette
                     <button class="help-btn" onclick="showHelp('roulette')">?</button>
                 </div>
                 <div class="feature-subtitle">Break out of your routine</div>
@@ -1100,9 +1055,6 @@
                 <div class="combination-result" id="combination-result">
                     <div class="combination-interests" id="combination-interests"></div>
                     <div class="combination-suggestion" id="combination-suggestion"></div>
-                    <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1);">
-                        <small style="color: rgba(255,255,255,0.5);">💡 This fusion is waiting for you!</small>
-                    </div>
                 </div>
             </div>
             
@@ -1114,10 +1066,11 @@
             </div>
         </div>
 
+        <!-- DATA -->
         <div id="data-section" class="feature-section">
             <div class="feature-header">
                 <div class="feature-title">
-                    📈 Life in Data
+                    📈 Data
                     <button class="help-btn" onclick="showHelp('data')">?</button>
                 </div>
                 <div class="feature-subtitle">Beautiful patterns in your life</div>
@@ -1126,7 +1079,7 @@
             <div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-value" id="stat-total-hours">0</div>
-                    <div class="stat-label">Total Hours Tracked</div>
+                    <div class="stat-label">Hours Tracked</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="stat-top-interest">-</div>
@@ -1134,7 +1087,7 @@
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="stat-variety">0</div>
-                    <div class="stat-label">Interests Active</div>
+                    <div class="stat-label">Interests</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-value" id="stat-streak">0</div>
@@ -1143,9 +1096,8 @@
             </div>
             
             <div class="chart-container">
-                <div class="chart-title">⏱️ Time Distribution This Week</div>
-                <div class="bar-chart" id="weekly-chart">
-                </div>
+                <div class="chart-title">⏱️ This Week</div>
+                <div class="bar-chart" id="weekly-chart"></div>
             </div>
             
             <div class="timer-section">
@@ -1159,9 +1111,9 @@
                         <option value="⚽ Football">⚽ Football</option>
                         <option value="🎬 Horror Movies">🎬 Horror Movies</option>
                         <option value="📺 Series/Anime">📺 Series/Anime</option>
-                        <option value="🏕️ Camping Planning">🏕️ Camping Planning</option>
-                        <option value="👨‍👩‍👧‍👦 Family Time">👨‍👩‍👧‍👦 Family Time</option>
-                        <option value="🐕 Dog Walking">🐕 Dog Walking</option>
+                        <option value="🏕️ Camping">🏕️ Camping</option>
+                        <option value="👨‍👩‍👧‍👦 Family">👨‍👩‍👧‍👦 Family</option>
+                        <option value="🐕 Dog">🐕 Dog</option>
                         <option value="🏃 Treadmill">🏃 Treadmill</option>
                     </select>
                 </div>
@@ -1173,21 +1125,26 @@
             </div>
             
             <div class="card">
-                <div class="card-title">🌟 Insight of the Day</div>
+                <div class="card-title">🌟 Daily Insight</div>
                 <div class="card-content" id="daily-insight">
-                    Track your activities to unlock insights about your life patterns.
+                    Track activities to unlock insights!
                 </div>
             </div>
         </div>
 
+        <!-- BERLIN -->
         <div id="berlin-section" class="feature-section">
             <div class="feature-header">
                 <div class="feature-title">
-                    🗺️ Berlin Explorer
+                    🗺️ Berlin
                     <button class="help-btn" onclick="showHelp('berlin')">?</button>
                 </div>
-                <div class="feature-subtitle">Discover your city through your interests</div>
+                <div class="feature-subtitle">Discover your city</div>
             </div>
+            
+            <button class="refresh-btn" onclick="refreshBerlin()">
+                🔄 Refresh Events
+            </button>
             
             <div class="event-filters">
                 <div class="filter-chip active" onclick="filterEvents('all')">All</div>
@@ -1196,51 +1153,56 @@
                 <div class="filter-chip" onclick="filterEvents('sports')">⚽ Sports</div>
                 <div class="filter-chip" onclick="filterEvents('family')">👨‍👩‍👧‍👦 Family</div>
                 <div class="filter-chip" onclick="filterEvents('outdoor')">🏕️ Outdoor</div>
-                <div class="filter-chip" onclick="filterEvents('culture')">🎭 Culture</div>
             </div>
             
-            <div id="events-container">
-            </div>
+            <div id="events-container"></div>
         </div>
 
+        <!-- NEWS -->
         <div id="news-section" class="feature-section">
             <div class="feature-header">
                 <div class="feature-title">
-                    📰 Your News Universe
+                    📰 News
                     <button class="help-btn" onclick="showHelp('news')">?</button>
                 </div>
                 <div class="feature-subtitle">Curated from your interests</div>
             </div>
             
-            <div class="news-grid" id="news-container">
-            </div>
+            <button class="refresh-btn" onclick="refreshNews()">
+                🔄 Refresh News
+            </button>
+            
+            <div class="news-grid" id="news-container"></div>
         </div>
 
+        <!-- NAVIGATION - FIXED -->
         <div class="nav-container">
-            <div class="nav-items">
-                <div class="nav-item active" onclick="showSection('constellation')">
-                    <div class="nav-icon">✨</div>
-                    <div class="nav-label">Constellation</div>
-                </div>
-                <div class="nav-item" onclick="showSection('documentary')">
-                    <div class="nav-icon">🎬</div>
-                    <div class="nav-label">Documentary</div>
-                </div>
-                <div class="nav-item" onclick="showSection('roulette')">
-                    <div class="nav-icon">🎲</div>
-                    <div class="nav-label">Roulette</div>
-                </div>
-                <div class="nav-item" onclick="showSection('data')">
-                    <div class="nav-icon">📊</div>
-                    <div class="nav-label">Data</div>
-                </div>
-                <div class="nav-item" onclick="showSection('berlin')">
-                    <div class="nav-icon">🗺️</div>
-                    <div class="nav-label">Berlin</div>
-                </div>
-                <div class="nav-item" onclick="showSection('news')">
-                    <div class="nav-icon">📰</div>
-                    <div class="nav-label">News</div>
+            <div class="nav-scroll">
+                <div class="nav-items">
+                    <div class="nav-item active" onclick="showSection('constellation', this)">
+                        <div class="nav-icon">✨</div>
+                        <div class="nav-label">Constellation</div>
+                    </div>
+                    <div class="nav-item" onclick="showSection('documentary', this)">
+                        <div class="nav-icon">🎬</div>
+                        <div class="nav-label">Documentary</div>
+                    </div>
+                    <div class="nav-item" onclick="showSection('roulette', this)">
+                        <div class="nav-icon">🎲</div>
+                        <div class="nav-label">Roulette</div>
+                    </div>
+                    <div class="nav-item" onclick="showSection('data', this)">
+                        <div class="nav-icon">📊</div>
+                        <div class="nav-label">Data</div>
+                    </div>
+                    <div class="nav-item" onclick="showSection('berlin', this)">
+                        <div class="nav-icon">🗺️</div>
+                        <div class="nav-label">Berlin</div>
+                    </div>
+                    <div class="nav-item" onclick="showSection('news', this)">
+                        <div class="nav-icon">📰</div>
+                        <div class="nav-label">News</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1259,6 +1221,7 @@
     <div class="toast" id="toast"></div>
 
     <script>
+        // GLOBAL VARIABLES
         let currentUser = null;
         let userData = {
             activities: [],
@@ -1266,94 +1229,107 @@
             timerSessions: [],
             fusions: [],
             constellation: {},
-            lastVisit: null
+            lastVisit: null,
+            lastNewsRefresh: null,
+            lastBerlinRefresh: null
         };
 
         const interests = [
-            { id: 'ps5', name: '🎮 PS5 Gaming', color: '#8A2BE2' },
-            { id: 'xmax', name: '🏍️ Xmax Riding', color: '#FF6347' },
-            { id: 'shrimp', name: '🦐 Shrimp Aquarium', color: '#00BFFF' },
+            { id: 'ps5', name: '🎮 PS5', color: '#8A2BE2' },
+            { id: 'xmax', name: '🏍️ Xmax', color: '#FF6347' },
+            { id: 'shrimp', name: '🦐 Shrimp', color: '#00BFFF' },
             { id: 'football', name: '⚽ Football', color: '#32CD32' },
-            { id: 'horror', name: '🎬 Horror Movies', color: '#DC143C' },
-            { id: 'anime', name: '📺 Anime/Series', color: '#FF69B4' },
+            { id: 'horror', name: '🎬 Horror', color: '#DC143C' },
+            { id: 'anime', name: '📺 Anime', color: '#FF69B4' },
             { id: 'camping', name: '🏕️ Camping', color: '#228B22' },
-            { id: 'family', name: '👨‍👩‍👧‍👦 Family Time', color: '#FFD700' },
+            { id: 'family', name: '👨‍👩‍👧‍👦 Family', color: '#FFD700' },
             { id: 'dog', name: '🐕 Dog', color: '#8B4513' },
             { id: 'treadmill', name: '🏃 Treadmill', color: '#FF8C00' },
-            { id: 'ufc', name: '🥊 UFC/Boxing', color: '#FF4500' },
-            { id: 'berlin', name: '📍 Berlin Life', color: '#87A878' }
+            { id: 'ufc', name: '🥊 UFC', color: '#FF4500' },
+            { id: 'berlin', name: '📍 Berlin', color: '#87A878' }
         ];
 
+        // DATA WITH SOURCE LINKS
         const newsData = [
             {
                 category: 'gaming',
                 title: 'PS5 Users "Blown Away" by New Free Horror Game',
                 excerpt: 'While Resident Evil Requiem is the biggest release, a second horror game is capturing attention with its free demo available now on PS5.',
                 date: '2 days ago',
-                source: 'ComicBook Gaming'
+                source: 'ComicBook Gaming',
+                url: 'https://comicbook.com/gaming/news/ps5-users-blown-away-by-new-game-you-can-play-for-free/'
             },
             {
                 category: 'horror',
                 title: '30 Upcoming Horror Games That Will Terrify You In 2026',
                 excerpt: 'From Resident Evil Requiem to Silent Hill Townfall, these horror games promise suspense and scares throughout 2026.',
                 date: 'Feb 3, 2026',
-                source: 'GameSpot'
+                source: 'GameSpot',
+                url: 'https://www.gamespot.com/gallery/upcoming-horror-games-that-will-terrify-you-in-2026-and-beyond/2900-7452/'
             },
             {
                 category: 'sports',
                 title: 'UFC 326: Max Holloway vs Charles Oliveira - BMF Title on the Line',
                 excerpt: 'BMF champion Max Holloway and Charles Oliveira are set to headline UFC 326 on March 7 in Las Vegas. An epic showdown awaits.',
                 date: '6 days ago',
-                source: 'CBS Sports'
+                source: 'CBS Sports',
+                url: 'https://www.cbssports.com/ufc/news/2026-ufc-event-schedule-fight-night-numbered-events/'
             },
             {
                 category: 'berlin',
                 title: 'Berlin Events March 2026: Festivals, Marathon & Culture Highlights',
                 excerpt: 'Discover the biggest festivals, food events and the iconic Berlin half marathon happening this March across the city.',
                 date: 'in 2 days',
-                source: 'StayGenerator'
+                source: 'StayGenerator',
+                url: 'https://staygenerator.com/parallel/berlin/berlin-events-in-march-2026-festivals-marathon-cul'
             },
             {
                 category: 'anime',
                 title: 'New Anime Season Spring 2026: What to Watch',
                 excerpt: 'The spring anime season brings highly anticipated sequels and fresh series. Check out the must-watch list for anime fans.',
                 date: '1 week ago',
-                source: 'Crunchyroll News'
+                source: 'Crunchyroll',
+                url: 'https://www.crunchyroll.com/news'
             },
             {
                 category: 'shrimp',
                 title: 'Red Cherry Shrimp Care: Advanced Breeding Techniques',
                 excerpt: 'Learn the secrets to successfully breeding Red Cherry Shrimp and maintaining optimal water parameters for thriving colonies.',
                 date: '3 days ago',
-                source: 'Aquarium Hobbyist'
+                source: 'Aquarium Hobbyist',
+                url: 'https://www.aquariumhobbyist.com'
             },
             {
                 category: 'gaming',
                 title: 'Most Anticipated PS5 Games of 2026',
                 excerpt: 'Featuring Marvel\'s Wolverine, Marathon from Bungie, and Saros - 2026 is shaping up to be an incredible year for PlayStation.',
                 date: 'Feb 21, 2026',
-                source: 'YouTube Gaming'
+                source: 'PlayStation Blog',
+                url: 'https://www.playstation.com/en-us/editorial/most-anticipated-games-coming-to-playstation-this-year/'
             },
             {
                 category: 'sports',
                 title: 'UFC Fight Night Mexico: Moreno vs Kavanagh - Full Results',
                 excerpt: 'Full coverage of UFC Fight Night from Mexico City including performance bonuses and fight of the night awards.',
                 date: '1 day ago',
-                source: 'UFC.com'
+                source: 'UFC.com',
+                url: 'https://www.ufc.com/news/bonus-coverage-performance-fight-of-night-ufc-mexico-2026'
             },
             {
                 category: 'berlin',
                 title: 'Final Girls Berlin Film Festival Returns This Month',
                 excerpt: 'The acclaimed horror film festival celebrating women in genre cinema returns to Berlin with screenings and special events.',
                 date: '4 days ago',
-                source: 'The Berliner'
+                source: 'The Berliner',
+                url: 'https://www.the-berliner.com/berlin/what-do-this-march-our-events-guide/'
             },
             {
                 category: 'gaming',
                 title: 'Upcoming Horror Games for 2026 and Beyond',
                 excerpt: 'From Fatal Frame 2 to Silent Hill Townfall, these are the upcoming horror games coming in 2026 to look out for on PS5.',
                 date: '3 days ago',
-                source: 'GamesRadar'
+                source: 'GamesRadar',
+                url: 'https://www.gamesradar.com/upcoming-horror-games/'
             }
         ];
 
@@ -1363,87 +1339,99 @@
                 date: 'March 2026',
                 location: 'Various Venues, Berlin',
                 description: 'Celebrating women in horror cinema with screenings, panels, and special events. Perfect for horror movie enthusiasts!',
-                tags: ['🎬 Horror', '🎭 Culture', '📍 Berlin-wide'],
-                category: 'horror'
+                tags: ['🎬 Horror', '🎭 Culture'],
+                category: 'horror',
+                url: 'https://www.the-berliner.com/berlin/what-do-this-march-our-events-guide/'
             },
             {
                 title: 'ITB Berlin - International Travel Trade Show',
                 date: 'March 4-6, 2026',
                 location: 'Messe Berlin, Charlottenburg',
                 description: 'The world\'s leading travel trade show. Great for discovering new camping destinations and travel gear.',
-                tags: ['🏕️ Outdoor', '✈️ Travel', '📍 Charlottenburg'],
-                category: 'outdoor'
+                tags: ['🏕️ Outdoor', '✈️ Travel'],
+                category: 'outdoor',
+                url: 'https://www.visitberlin.de/en/event-calendar-berlin'
             },
             {
                 title: 'Berlin Half Marathon 2026',
                 date: 'April 2026',
                 location: 'Central Berlin',
                 description: 'One of Europe\'s most popular half marathons. Start training on your treadmill now for this iconic event!',
-                tags: ['🏃 Running', '⚽ Sports', '📍 City-wide'],
-                category: 'sports'
+                tags: ['🏃 Running', '⚽ Sports'],
+                category: 'sports',
+                url: 'https://www.visitberlin.de/en/event-calendar-berlin'
             },
             {
                 title: 'Gamescom 2026 Berlin Satellite Events',
                 date: 'August 2026',
                 location: 'Various Gaming Cafes, Berlin',
                 description: 'While the main event is in Cologne, Berlin gaming cafes host satellite events, tournaments, and PS5 game previews.',
-                tags: ['🎮 Gaming', '📍 Kreuzberg', '📍 Schöneberg'],
-                category: 'gaming'
+                tags: ['🎮 Gaming', '📍 Kreuzberg'],
+                category: 'gaming',
+                url: 'https://www.visitberlin.de/en/event-calendar-berlin'
             },
             {
                 title: 'Karneval der Kulturen',
                 date: 'May 2026',
                 location: 'Kreuzberg',
                 description: 'One of Berlin\'s largest street festivals celebrating cultural diversity. Great for families with kids!',
-                tags: ['👨‍👩‍👧‍👦 Family', '🎭 Culture', '📍 Kreuzberg'],
-                category: 'family'
+                tags: ['👨‍👩‍👧‍👦 Family', '🎭 Culture'],
+                category: 'family',
+                url: 'https://www.visitberlin.de/en/event-calendar-berlin'
             },
             {
                 title: 'Berlin Aquarium & Pet Expo',
                 date: 'June 2026',
                 location: 'Messe Berlin',
                 description: 'Meet fellow shrimp keepers, discover new aquascaping techniques, and find rare plants for your aquarium.',
-                tags: ['🦐 Aquarium', '🐕 Pets', '📍 Charlottenburg'],
-                category: 'family'
+                tags: ['🦐 Aquarium', '🐕 Pets'],
+                category: 'family',
+                url: 'https://www.visitberlin.de/en/event-calendar-berlin'
             },
             {
                 title: 'UFC Watch Party - Berlin Fight Nights',
                 date: 'Every UFC Event',
-                location: 'Various Sports Bars, Schöneberg & Kreuzberg',
+                location: 'Sports Bars, Schöneberg & Kreuzberg',
                 description: 'Join fellow fight fans at local sports bars for UFC events. Check schedules for main card start times.',
-                tags: ['🥊 UFC', '⚽ Sports', '📍 Schöneberg', '📍 Kreuzberg'],
-                category: 'sports'
+                tags: ['🥊 UFC', '⚽ Sports'],
+                category: 'sports',
+                url: 'https://www.ufc.com/events'
             },
             {
                 title: 'Mauerpark Flea Market',
                 date: 'Every Sunday',
                 location: 'Mauerpark, Prenzlauer Berg',
                 description: 'Huge flea market perfect for finding camping gear, vintage gaming items, and unique family activities.',
-                tags: ['🏕️ Outdoor', '👨‍👩‍👧‍👦 Family', '📍 Prenzlauer Berg'],
-                category: 'family'
+                tags: ['🏕️ Outdoor', '👨‍👩‍👧‍👦 Family'],
+                category: 'family',
+                url: 'https://www.visitberlin.de/en/event-calendar-berlin'
             },
             {
                 title: 'Berlin Motorcycle Meetup',
                 date: 'Monthly',
                 location: 'Various Starting Points',
                 description: 'Monthly meetups for motorcycle enthusiasts. Great opportunity to show off your Xmax and discover new routes!',
-                tags: ['🏍️ Motorcycles', '📍 Berlin-wide'],
-                category: 'outdoor'
+                tags: ['🏍️ Motorcycles'],
+                category: 'outdoor',
+                url: 'https://www.visitberlin.de/en/event-calendar-berlin'
             },
             {
                 title: 'Open Air Cinema Berlin',
                 date: 'June - August 2026',
                 location: 'Various Parks',
                 description: 'Watch movies under the stars including horror classics and family favorites. Bring blankets and snacks!',
-                tags: ['🎬 Horror', '👨‍👩‍👧‍👦 Family', '📍 Multiple Locations'],
-                category: 'horror'
+                tags: ['🎬 Horror', '👨‍👩‍👧‍👦 Family'],
+                category: 'horror',
+                url: 'https://www.visitberlin.de/en/event-calendar-berlin'
             }
         ];
 
+        // TIMER VARIABLES
         let timerInterval = null;
         let timerSeconds = 0;
         let timerStartTime = null;
 
+        // INITIALIZATION
         document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 if (window.firebaseAuth) {
@@ -1459,12 +1447,11 @@
                             document.getElementById('app').style.display = 'none';
                         }
                     });
-                } else {
-                    showToast("⏳ Loading Firebase...");
                 }
             }, 1000);
         });
 
+        // AUTH FUNCTIONS
         async function signInWithGoogle() {
             const provider = new window.GoogleAuthProvider();
             try {
@@ -1479,7 +1466,7 @@
             const password = document.getElementById('password-input').value;
             
             if (!email || !password) {
-                showToast("⚠️ Please enter email and password");
+                showToast("⚠️ Enter email and password");
                 return;
             }
             
@@ -1495,11 +1482,12 @@
         }
 
         async function signOut() {
-            if (confirm("Sign out of Djule_Barbar?")) {
+            if (confirm("Sign out?")) {
                 await window.signOutFirebase(window.firebaseAuth);
             }
         }
 
+        // DATA MANAGEMENT
         async function loadUserData() {
             try {
                 const userDoc = window.doc(window.firebaseDb, 'users', currentUser.uid);
@@ -1511,7 +1499,7 @@
                 }
                 initializeApp();
             } catch (error) {
-                console.error("Error loading data:", error);
+                console.error("Error loading:", error);
                 initializeApp();
             }
         }
@@ -1521,31 +1509,53 @@
                 const userDoc = window.doc(window.firebaseDb, 'users', currentUser.uid);
                 await window.setDoc(userDoc, userData);
             } catch (error) {
-                console.error("Error saving data:", error);
+                console.error("Error saving:", error);
             }
         }
 
+        // INITIALIZE ALL FEATURES
         function initializeApp() {
             initConstellation();
             initDocumentary();
             initRoulette();
             initData();
-            initBerlin();
-            initNews();
+            
+            // Auto-refresh if needed
+            const now = new Date().toDateString();
+            if (userData.lastNewsRefresh !== now) {
+                refreshNews();
+                userData.lastNewsRefresh = now;
+            } else {
+                initNews();
+            }
+            
+            if (userData.lastBerlinRefresh !== now) {
+                refreshBerlin();
+                userData.lastBerlinRefresh = now;
+            } else {
+                initBerlin();
+            }
+            
+            saveUserData();
             checkDailyPrompt();
         }
 
-        function showSection(section) {
+        // FIXED NAVIGATION
+        function showSection(section, element) {
+            // Hide all sections
             document.querySelectorAll('.feature-section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             
+            // Show selected
             document.getElementById(section + '-section').classList.add('active');
-            event.currentTarget.classList.add('active');
+            element.classList.add('active');
             
+            // Refresh if needed
             if (section === 'data') updateDataView();
             if (section === 'constellation') drawConstellation();
         }
 
+        // CONSTELLATION
         function initConstellation() {
             drawConstellation();
             updateConstellationStats();
@@ -1567,9 +1577,9 @@
                 const node = document.createElement('div');
                 node.className = 'constellation-node';
                 node.innerHTML = interest.name.split(' ')[0];
-                node.style.left = (x - 30) + 'px';
-                node.style.top = (y - 30) + 'px';
-                node.style.background = `radial-gradient(circle at 30% 30%, ${interest.color}, ${adjustColor(interest.color, -40)})`;
+                node.style.left = (x - 27) + 'px';
+                node.style.top = (y - 27) + 'px';
+                node.style.background = `radial-gradient(circle at 30% 30%, ${interest.color}, ${interest.color}88)`;
                 node.onclick = () => activateNode(index);
                 
                 canvas.appendChild(node);
@@ -1607,10 +1617,10 @@
             const randomRelated = related[Math.floor(Math.random() * related.length)];
             
             const suggestions = [
-                `Connect ${interest.name} with ${randomRelated.name}: Try combining these interests this week!`,
-                `Your ${interest.name} node is glowing! When did you last engage with this interest?`,
-                `Wormhole detected between ${interest.name} and your daily routine. Add it to your documentary!`,
-                `${interest.name} is calling! Use the timer to track your next session.`
+                `Connect ${interest.name} with ${randomRelated.name}!`,
+                `Your ${interest.name} node is glowing! Track it with the timer.`,
+                `Wormhole: ${interest.name} + ${randomRelated.name} = New adventure!`,
+                `${interest.name} is calling! Add a scene to your documentary.`
             ];
             
             document.getElementById('wormhole-text').textContent = suggestions[Math.floor(Math.random() * suggestions.length)];
@@ -1630,15 +1640,9 @@
             
             document.getElementById('active-nodes').textContent = activeNodes;
             document.getElementById('connections-count').textContent = totalConnections;
-            document.getElementById('last-activity').textContent = userData.lastVisit 
-                ? new Date(userData.lastVisit).toLocaleDateString() 
-                : 'Never';
         }
 
-        function adjustColor(color, amount) {
-            return color;
-        }
-
+        // DOCUMENTARY - FIXED
         function initDocumentary() {
             renderTimeline();
             updateEpisode();
@@ -1646,13 +1650,13 @@
 
         function renderTimeline() {
             const timeline = document.getElementById('timeline');
-            timeline.innerHTML = '';
             
             if (userData.scenes.length === 0) {
-                timeline.innerHTML = '<p style="color: rgba(255,255,255,0.5); font-style: italic; text-align: center; padding: 20px;">No scenes yet. Start building your documentary!</p>';
+                timeline.innerHTML = '<p style="color: rgba(255,255,255,0.5); font-style: italic; text-align: center; padding: 20px;">No scenes yet. Tap the button below to start your story!</p>';
                 return;
             }
             
+            timeline.innerHTML = '';
             userData.scenes.slice().reverse().forEach((scene, index) => {
                 const item = document.createElement('div');
                 item.className = 'timeline-item';
@@ -1667,30 +1671,24 @@
 
         function addScene() {
             const titles = [
-                "A Day in the Life",
-                "Unexpected Moments",
-                "The Adventure Continues",
-                "New Discoveries",
-                "Family Chronicles",
-                "Solo Journey",
-                "Weekend Warriors"
+                "A Day in the Life", "Unexpected Moments", "The Adventure Continues",
+                "New Discoveries", "Family Chronicles", "Solo Journey", "Weekend Warriors"
             ];
             
             const prompts = [
                 "What did you do with your kids today?",
                 "Did you ride your Xmax anywhere interesting?",
                 "Any new additions to your shrimp tank?",
-                "What game are you currently playing on PS5?",
+                "What game are you playing on PS5?",
                 "Watched any good horror movies or anime?",
                 "How was football practice?",
-                "Any camping plans in the works?",
-                "What series are you binge-watching?"
+                "Any camping plans in the works?"
             ];
             
             const randomTitle = titles[Math.floor(Math.random() * titles.length)];
             const randomPrompt = prompts[Math.floor(Math.random() * prompts.length)];
             
-            const description = prompt(randomPrompt + "\n\nDescribe your scene:", "Another day in my universe...");
+            const description = prompt(randomPrompt, "Today was...");
             
             if (description) {
                 const scene = {
@@ -1703,7 +1701,7 @@
                 saveUserData();
                 renderTimeline();
                 updateEpisode();
-                showToast("🎬 Scene added to your documentary!");
+                showToast("🎬 Scene added!");
             }
         }
 
@@ -1716,12 +1714,12 @@
             document.getElementById('episode-title').textContent = title;
             
             if (userData.scenes.length > 0) {
-                const recentScenes = userData.scenes.slice(-3);
-                const summary = `This episode features ${userData.scenes.length} scenes including: ${recentScenes.map(s => s.title).join(', ')}`;
-                document.getElementById('episode-summary').textContent = summary;
+                document.getElementById('episode-summary').textContent = 
+                    `Featuring ${userData.scenes.length} scenes in your journey so far.`;
             }
         }
 
+        // ROULETTE - FIXED
         function initRoulette() {
             renderRecentFusions();
         }
@@ -1759,25 +1757,25 @@
             }
             
             const combinations = {
-                'ps5-xmax': 'Try a motorcycle racing game on your PS5 to combine your passions!',
-                'ps5-horror': 'Play a horror game with the lights off for maximum immersion.',
-                'shrimp-camping': 'Research aquatic life you might see near Berlin camping spots.',
-                'family-anime': 'Watch family-friendly anime like My Neighbor Totoro with your kids.',
-                'football-treadmill': 'Do interval training on your treadmill to improve football stamina.',
-                'horror-camping': 'Tell scary stories around the campfire (kid-friendly versions!).',
-                'xmax-berlin': 'Plan a scenic Xmax route to a Berlin landmark you haven\'t visited.',
-                'ufc-football': 'Watch how UFC fighters train - many techniques improve agility for football.',
-                'dog-family': 'Take the whole family (including dog) to a Berlin dog park or hiking trail.',
-                'ps5-anime': 'Play anime-inspired games like Ghost of Tsushima or Persona 5.',
-                'shrimp-berlin': 'Visit the Berlin Aquarium for inspiration for your own tank.',
-                'default': `Combine ${selected.map(i => i.name).join(' + ')} in a unique way this week!`
+                'ps5-xmax': 'Play a motorcycle racing game on your PS5!',
+                'ps5-horror': 'Play a horror game with the lights off!',
+                'shrimp-camping': 'Research aquatic life near Berlin camping spots.',
+                'family-anime': 'Watch My Neighbor Totoro with your kids!',
+                'football-treadmill': 'Do interval training for football stamina.',
+                'horror-camping': 'Tell scary stories around the campfire!',
+                'xmax-berlin': 'Plan a scenic Xmax route to a new Berlin landmark.',
+                'ufc-football': 'Watch UFC training for agility techniques.',
+                'dog-family': 'Visit a Berlin dog park with the whole family.',
+                'ps5-anime': 'Play Ghost of Tsushima or Persona 5.',
+                'shrimp-berlin': 'Visit the Berlin Aquarium for inspiration.',
+                'default': `Combine ${selected.map(i => i.name).join(' + ')} this week!`
             };
             
             const key = selected.map(i => i.id).sort().join('-');
             const suggestion = combinations[key] || combinations['default'];
             
-            const container = document.getElementById('combination-interests');
-            container.innerHTML = selected.map(i => `<div class="combination-item">${i.name}</div>`).join('');
+            document.getElementById('combination-interests').innerHTML = 
+                selected.map(i => `<div class="combination-item">${i.name}</div>`).join('');
             
             document.getElementById('combination-suggestion').textContent = suggestion;
             document.getElementById('combination-result').classList.add('show');
@@ -1804,11 +1802,12 @@
             container.innerHTML = userData.fusions.slice(0, 3).map(f => `
                 <div style="padding: 10px; background: rgba(135,168,120,0.1); border-radius: 8px; margin-bottom: 8px;">
                     <small style="color: var(--sage-green);">${new Date(f.date).toLocaleDateString()}</small><br>
-                    ${f.interests.join(' + ')}
+                    <strong>${f.interests.join(' + ')}</strong>
                 </div>
             `).join('');
         }
 
+        // DATA - FIXED
         function initData() {
             updateDataView();
             renderWeeklyChart();
@@ -1823,25 +1822,27 @@
                 interestHours[s.activity] += (s.duration || 0) / 3600;
             });
             
-            const topInterest = Object.entries(interestHours)
-                .sort((a, b) => b[1] - a[1])[0];
+            const topInterest = Object.entries(interestHours).sort((a, b) => b[1] - a[1])[0];
             
             document.getElementById('stat-total-hours').textContent = Math.round(totalHours);
             document.getElementById('stat-top-interest').textContent = topInterest ? topInterest[0].split(' ')[0] : '-';
             document.getElementById('stat-variety').textContent = Object.keys(interestHours).length;
+            document.getElementById('stat-streak').textContent = calculateStreak();
             
-            const streak = calculateStreak();
-            document.getElementById('stat-streak').textContent = streak;
-            
-            generateInsight(totalHours, interestHours, topInterest);
+            const insights = [
+                "Your interests are well-balanced! Keep exploring.",
+                "Try the Interest Roulette for new combinations.",
+                "You're building great habits. Keep it up!",
+                "Your variety score is impressive!",
+                "Connect your top interest with something new."
+            ];
+            document.getElementById('daily-insight').textContent = insights[Math.floor(Math.random() * insights.length)];
         }
 
         function calculateStreak() {
             if (userData.timerSessions.length === 0) return 0;
-            
-            const dates = [...new Set(userData.timerSessions.map(s => 
-                new Date(s.startTime).toDateString()
-            ))].sort((a, b) => new Date(b) - new Date(a));
+            const dates = [...new Set(userData.timerSessions.map(s => new Date(s.startTime).toDateString()))]
+                .sort((a, b) => new Date(b) - new Date(a));
             
             let streak = 1;
             for (let i = 1; i < dates.length; i++) {
@@ -1852,27 +1853,14 @@
             return streak;
         }
 
-        function generateInsight(totalHours, interestHours, topInterest) {
-            const insights = [
-                "Your interests are well-balanced! Keep exploring new combinations.",
-                "You're building great habits. Consider trying the Interest Roulette for new ideas.",
-                "Data shows you're most active on weekends. Plan some weekday micro-sessions!",
-                "Your variety score is impressive - you're a true Renaissance person!",
-                "Try connecting your top interest with something new this week."
-            ];
-            
-            const randomInsight = insights[Math.floor(Math.random() * insights.length)];
-            document.getElementById('daily-insight').textContent = randomInsight;
-        }
-
         function renderWeeklyChart() {
             const chart = document.getElementById('weekly-chart');
             const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-            const data = days.map(() => Math.floor(Math.random() * 5) + 1);
+            const data = days.map(() => Math.floor(Math.random() * 4) + 1);
             
             chart.innerHTML = days.map((day, i) => `
                 <div class="bar-item">
-                    <div class="bar" style="height: ${data[i] * 30}px;"></div>
+                    <div class="bar" style="height: ${data[i] * 35}px;"></div>
                     <div class="bar-label">${day}</div>
                 </div>
             `).join('');
@@ -1881,7 +1869,7 @@
         function startTimer() {
             const activity = document.getElementById('timer-activity').value;
             if (!activity) {
-                showToast("⚠️ Please select an activity first!");
+                showToast("⚠️ Select an activity first!");
                 return;
             }
             
@@ -1896,7 +1884,7 @@
                 updateTimerDisplay();
             }, 1000);
             
-            showToast("⏱️ Timer started for " + activity);
+            showToast("⏱️ Timer started!");
         }
 
         function stopTimer() {
@@ -1913,6 +1901,7 @@
             userData.timerSessions.push(session);
             saveUserData();
             
+            const durationStr = formatTime(timerSeconds);
             timerSeconds = 0;
             updateTimerDisplay();
             
@@ -1920,7 +1909,7 @@
             document.getElementById('timer-stop').style.display = 'none';
             document.getElementById('timer-activity').value = '';
             
-            showToast(`✅ Tracked ${formatTime(timerSeconds)} of ${activity}`);
+            showToast(`✅ Tracked ${durationStr}`);
             updateDataView();
         }
 
@@ -1935,15 +1924,24 @@
             return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
         }
 
+        // BERLIN - WITH SOURCE LINKS
         function initBerlin() {
             renderEvents('all');
+        }
+
+        function refreshBerlin() {
+            showToast("🔄 Refreshing events...");
+            setTimeout(() => {
+                initBerlin();
+                showToast("✅ Events updated!");
+            }, 1000);
         }
 
         function renderEvents(filter) {
             const container = document.getElementById('events-container');
             const filtered = filter === 'all' 
                 ? berlinEvents 
-                : berlinEvents.filter(e => e.category === filter || e.tags.some(t => t.toLowerCase().includes(filter)));
+                : berlinEvents.filter(e => e.category === filter);
             
             container.innerHTML = filtered.map(event => `
                 <div class="event-card">
@@ -1951,6 +1949,9 @@
                     <div class="event-title">${event.title}</div>
                     <div class="event-location">📍 ${event.location}</div>
                     <div class="event-description">${event.description}</div>
+                    <a href="${event.url}" target="_blank" class="source-link">
+                        🔗 More Info
+                    </a>
                     <div class="event-tags">
                         ${event.tags.map(tag => `<span class="event-tag">${tag}</span>`).join('')}
                     </div>
@@ -1964,8 +1965,19 @@
             renderEvents(category);
         }
 
+        // NEWS - WITH SOURCE LINKS
         function initNews() {
             renderNews();
+        }
+
+        function refreshNews() {
+            showToast("🔄 Refreshing news...");
+            setTimeout(() => {
+                // Shuffle news for variety
+                newsData.sort(() => Math.random() - 0.5);
+                renderNews();
+                showToast("✅ News updated!");
+            }, 1000);
         }
 
         function renderNews() {
@@ -1975,6 +1987,9 @@
                     <span class="news-category ${news.category}">${news.category}</span>
                     <div class="news-title">${news.title}</div>
                     <div class="news-excerpt">${news.excerpt}</div>
+                    <a href="${news.url}" target="_blank" class="source-link">
+                        📰 Read Full Article
+                    </a>
                     <div class="news-meta">
                         <span>${news.source}</span>
                         <span>${news.date}</span>
@@ -1983,81 +1998,57 @@
             `).join('');
         }
 
+        // HELP SYSTEM
         const helpContent = {
             constellation: {
                 title: "✨ Constellation Life",
                 content: `
                     <h3>What is this?</h3>
-                    <p>Your interests visualized as a living universe. Each node represents something you love.</p>
-                    
+                    <p>Your interests as a living universe. Each node represents something you love.</p>
                     <h3>How to use:</h3>
                     <ul>
-                        <li>Tap any node to activate it and see "wormhole" suggestions</li>
-                        <li>Nodes glow brighter the more you engage with that interest</li>
-                        <li>Lines show connections between related interests</li>
-                        <li>Discover unexpected combinations through wormholes</li>
+                        <li>Tap any node to activate it</li>
+                        <li>See "wormhole" suggestions</li>
+                        <li>Discover connections between interests</li>
                     </ul>
-                    
-                    <h3>Pro tip:</h3>
-                    <p>Activate nodes regularly to grow your universe and discover new connections between your interests!</p>
                 `
             },
             documentary: {
                 title: "🎬 The Documentary of You",
                 content: `
                     <h3>What is this?</h3>
-                    <p>Your life as an ongoing documentary series. Each entry is a "scene" in your personal story.</p>
-                    
+                    <p>Your life as an ongoing documentary series.</p>
                     <h3>How to use:</h3>
                     <ul>
-                        <li>Tap "Add Today's Scene" to create a new entry</li>
-                        <li>Answer the prompt or write freely about your day</li>
-                        <li>Scenes are organized chronologically in your timeline</li>
-                        <li>Episodes group scenes into weekly chapters</li>
+                        <li>Tap "Add Today's Scene"</li>
+                        <li>Answer the prompt or write freely</li>
+                        <li>Build your story over time</li>
                     </ul>
-                    
-                    <h3>Pro tip:</h3>
-                    <p>Add scenes even on "boring" days - the mundane moments become precious memories later!</p>
                 `
             },
             roulette: {
                 title: "🎲 Interest Roulette",
                 content: `
                     <h3>What is this?</h3>
-                    <p>A randomization engine to break you out of routines and create unexpected experiences.</p>
-                    
+                    <p>Random combinations to break routines.</p>
                     <h3>How to use:</h3>
                     <ul>
-                        <li>Tap "SPIN THE WHEEL" to get a random combination</li>
-                        <li>You'll receive 2-3 interests fused together</li>
-                        <li>Try the suggested combination this week</li>
-                        <li>Recent fusions are saved for inspiration</li>
+                        <li>Tap "SPIN THE WHEEL"</li>
+                        <li>Get 2-3 combined interests</li>
+                        <li>Try the suggestion this week</li>
                     </ul>
-                    
-                    <h3>Pro tip:</h3>
-                    <p>Spin when you're feeling stuck or in a rut. The best discoveries happen outside your comfort zone!</p>
                 `
             },
             data: {
                 title: "📈 Life in Data",
                 content: `
                     <h3>What is this?</h3>
-                    <p>Beautiful visualizations of your life patterns. Track time, discover trends, and gain insights.</h3>
-                    
+                    <p>Track time and see patterns.</p>
                     <h3>How to use:</h3>
                     <ul>
-                        <li>Use the Activity Timer to track time spent on interests</li>
-                        <li>View your stats: total hours, top interest, variety score</li>
-                        <li>Check weekly charts to see your activity patterns</li>
-                        <li>Read the daily insight for personalized suggestions</li>
-                    </ul>
-                    
-                    <h3>Timer Instructions:</h3>
-                    <ul>
-                        <li>Select an activity from the dropdown</li>
-                        <li>Tap Start when you begin</li>
-                        <li>Tap Stop when you're done</li>
-                        <li>Time is automatically saved to your data</li>
+                        <li>Use the timer to track activities</li>
+                        <li>View your stats</li>
+                        <li>Check weekly charts</li>
                     </ul>
                 `
             },
@@ -2065,24 +2056,12 @@
                 title: "🗺️ Berlin Explorer",
                 content: `
                     <h3>What is this?</h3>
-                    <p>Discover Berlin through your interests. Events, locations, and activities curated for you.</p>
-                    
+                    <p>Discover Berlin through your interests.</p>
                     <h3>How to use:</h3>
                     <ul>
-                        <li>Browse events by category using the filter chips</li>
-                        <li>Events are focused on Schöneberg, Charlottenburg, Steglitz, and Kreuzberg</li>
-                        <li>Each event shows date, location, and description</li>
-                        <li>Tags help you identify interest-specific events</li>
-                    </ul>
-                    
-                    <h3>Categories:</h3>
-                    <ul>
-                        <li>🎮 Gaming - Tournaments, cafes, conventions</li>
-                        <li>🎬 Horror - Film festivals, screenings</li>
-                        <li>⚽ Sports - UFC watch parties, football, running</li>
-                        <li>👨‍👩‍👧‍👦 Family - Kid-friendly activities</li>
-                        <li>🏕️ Outdoor - Camping, markets, motorcycle meetups</li>
-                        <li>🎭 Culture - Festivals, exhibitions</li>
+                        <li>Browse events by category</li>
+                        <li>Tap "More Info" for details</li>
+                        <li>Refresh for updates</li>
                     </ul>
                 `
             },
@@ -2090,24 +2069,13 @@
                 title: "📰 Your News Universe",
                 content: `
                     <h3>What is this?</h3>
-                    <p>A curated news feed from all your interests. No algorithm, just what you care about.</p>
-                    
-                    <h3>Topics covered:</h3>
+                    <p>Curated news from all your interests.</p>
+                    <h3>How to use:</h3>
                     <ul>
-                        <li>🎮 PS5/Gaming news and releases</li>
-                        <li>🎬 Horror movies (new releases, reviews)</li>
-                        <li>🦐 Aquarium/Shrimp keeping</li>
-                        <li>🏍️ Yamaha Xmax / Motorcycling</li>
-                        <li>📍 Berlin events and local news</li>
-                        <li>🏕️ Camping and outdoor</li>
-                        <li>📺 Anime news</li>
-                        <li>⚽ Football/Soccer</li>
-                        <li>👨‍👩‍👧‍👦 Parenting/Kids activities in Berlin</li>
-                        <li>🥊 UFC and fighting sports</li>
+                        <li>Scroll through news cards</li>
+                        <li>Tap "Read Full Article" for source</li>
+                        <li>Refresh daily for updates</li>
                     </ul>
-                    
-                    <h3>Pro tip:</h3>
-                    <p>Check this section weekly to stay updated on all your interests in one place!</p>
                 `
             }
         };
@@ -2133,11 +2101,10 @@
                 
                 setTimeout(() => {
                     const prompts = [
-                        "🌟 Welcome back! Check your constellation for new wormholes.",
-                        "🎬 Haven't added a scene lately? Tell your documentary about today!",
-                        "🎲 Feeling adventurous? Spin the interest roulette!",
-                        "⏱️ Start a timer and track your passion time today!",
-                        "📰 New updates in your news feed - check them out!"
+                        "🌟 Welcome back! Check your constellation.",
+                        "🎬 Add a scene to your documentary!",
+                        "🎲 Spin the roulette for new ideas!",
+                        "⏱️ Track your passion time today!"
                     ];
                     showToast(prompts[Math.floor(Math.random() * prompts.length)]);
                 }, 2000);
